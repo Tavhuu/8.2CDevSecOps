@@ -9,7 +9,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Tavhuu/8.2CDevSecOps.git'
+                git branch: 'main', url: 'https://github.com/Tavhuu/8.2C.git'
             }
         }
 
@@ -21,16 +21,16 @@ pipeline {
         }
 
         stage('Run Tests') {
-    steps {
-        echo 'Running unit tests...'
-        sh 'npm test || true'
-    }
-}
+            steps {
+                echo 'Running unit tests...'
+                sh 'npm test || true'
+            }
+        }
 
         stage('Generate Coverage Report') {
             steps {
                 echo 'Generating code coverage report...'
-                sh 'npm run coverage  true'
+                sh 'npm run coverage || true'
             }
         }
 
@@ -50,12 +50,12 @@ pipeline {
                         unzip -o sonar-scanner.zip
                         chmod +x ./sonar-scanner-5.0.1.3006-macosx/bin/sonar-scanner
                         ./sonar-scanner-5.0.1.3006-macosx/bin/sonar-scanner \
-                            -Dsonar.projectKey=Tavhuu_8.2CDevSecOps \
+                            -Dsonar.projectKey=Tavhuu_8.2C \
                             -Dsonar.organization=tavhuu \
                             -Dsonar.host.url=https://sonarcloud.io \
                             -Dsonar.login=\$SONAR_TOKEN \
                             -Dsonar.sources=. \
-                            -Dsonar.exclusions=node_modules/,test/ \
+                            -Dsonar.exclusions=node_modules/**,test/** \
                             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
                     """
                 }
