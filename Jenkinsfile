@@ -21,11 +21,11 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                echo 'Running unit tests...'
-                sh 'npm test  true'
-            }
-        }
+    steps {
+        echo 'Running unit tests...'
+        sh 'npm test || true'
+    }
+}
 
         stage('Generate Coverage Report') {
             steps {
