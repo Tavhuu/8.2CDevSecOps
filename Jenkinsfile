@@ -23,14 +23,14 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo 'Running unit tests...'
-                sh 'npm test || true'
+                sh 'npm test  true'
             }
         }
 
         stage('Generate Coverage Report') {
             steps {
                 echo 'Generating code coverage report...'
-                sh 'npm run coverage || true'
+                sh 'npm run coverage  true'
             }
         }
 
@@ -38,6 +38,27 @@ pipeline {
             steps {
                 echo 'Running security scan to identify known vulnerabilities (CVEs)...'
                 sh 'npm audit || true'
+            }
+        }
+
+        stage('SonarCloud Analysis') {
+            steps {
+                echo 'Downloading and running SonarScanner CLI for code quality analysis...'
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    sh """
+                        curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-macosx.zip
+                        unzip -o sonar-scanner.zip
+                        chmod +x ./sonar-scanner-5.0.1.3006-macosx/bin/sonar-scanner
+                        ./sonar-scanner-5.0.1.3006-macosx/bin/sonar-scanner \
+                            -Dsonar.projectKey=Tavhuu_8.2CDevSecOps \
+                            -Dsonar.organization=tavhuu \
+                            -Dsonar.host.url=https://sonarcloud.io \
+                            -Dsonar.login=\$SONAR_TOKEN \
+                            -Dsonar.sources=. \
+                            -Dsonar.exclusions=node_modules/,test/ \
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                    """
+                }
             }
         }
 
